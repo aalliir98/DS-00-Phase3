@@ -83,7 +83,7 @@ class main {
                 st.append("(-1)*");
             } else if (i == 0 && tokens[i] == '-' && tokens[i + 1] >= '0' && tokens[i + 1] <= '9' && tokens[i + 2] == '^') {
                 st.append("(-1)*");
-            } else if (tokens[i] == '-' && tokens[i + 1] >= '0' && tokens[i + 1] <= '9' && tokens[i + 2] == '^' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9')) {
+            } else if (tokens[i] == '-' && tokens[i + 1] >= '0' && tokens[i + 1] <= '9' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && tokens[i + 2] == '^'  ) {
                 st.append("(-1)*");
             } else if (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && (tokens[i + 1] >= '0' && tokens[i + 1] <= '9') && tokens[i - 1] != ')')) {
                 StringBuffer sbuf = new StringBuffer();
@@ -273,9 +273,47 @@ class main {
     public static double evaluatePostfix(String exp) throws Exception {
         Stack<Double> stack = new Stack<Double>();
         char[] tokens = exp.toCharArray();
-        ArrayList<String>al = new ArrayList<>();
         StringBuffer result = new StringBuffer();
 
+        for (int i = 0; i < exp.length(); i++) {
+
+            result = new StringBuffer();
+
+            if (tokens[i]  >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i-1] >= '0' && tokens[i-1] <= '9') && (tokens[i+1] >= '0' && tokens[i+1] <= '9'))) {
+                while (tokens[i] != ' ')
+                    result.append(tokens[i++]);
+                stack.push(Double.parseDouble(String.valueOf(result)));
+                i--;
+            } else if(tokens[i]!=' ') {
+                double val1 =  stack.pop();
+                double val2 =  stack.pop();
+
+                double r = 0;
+                switch (tokens[i]) {
+                    case '+' : r = val2 + val1;break;
+                    case '-' : r = val2 - val1;break;
+                    case '*' : r = val2 * val1;break;
+                    case '^' : r = Math.pow(val2, val1);break;
+                    case '/' : {
+                        if (val1 == 0)
+                            throw new
+                                    UnsupportedOperationException();
+                        r = val2 / val1;
+                    }break;
+                }
+                stack.push(r);
+            }
+        }
+        return stack.pop();
+    }
+
+    public static String show_steps(String exp) throws Exception {
+        Stack<Double> stack = new Stack<Double>();
+        char[] tokens = exp.toCharArray();
+        ArrayList<String>al = new ArrayList<>();
+        StringBuffer result = new StringBuffer();
+        int y=0;
+        StringBuffer sb = new StringBuffer();
         for (int i =0;i<tokens.length;i++) {
             result = new StringBuffer();
             if (tokens[i] != ' ') {
@@ -283,8 +321,8 @@ class main {
                     result.append(tokens[i++]);
                 i--;
             }
-            if (!result.isEmpty())
-            al.add(String.valueOf(result));
+            if (result.length()!=0)
+                al.add(String.valueOf(result));
         }
 
         for (int i = 0; i < exp.length(); i++) {
@@ -313,8 +351,7 @@ class main {
                         r = val2 / val1;
                     }
                 }
-                boolean flag=true;
-                for (int j=0;j<al.size()-2;j++) {
+                for (int j = 0; j < al.size() - 2; j++) {
                     if (al.get(j).equals(String.valueOf(val2)) && al.get(j + 1).equals(String.valueOf(val1)) && al.get(j + 2).equals(String.valueOf(tokens[i]))) {
                         for (int t = 0; t < 3; t++)
                             al.remove(j);
@@ -323,14 +360,14 @@ class main {
                     }
                 }
                 result = new StringBuffer();
-                for (String j: al) {
-                    result.append(j+" ");
+                for (String j : al) {
+                    result.append(j + " ");
                 }
-                System.out.println(getInfix(String.valueOf(result)));
+                sb.append(getInfix(String.valueOf(result))+"\n"+"--------------"+"\n");
                 stack.push(r);
             }
         }
-        return (double) stack.pop();
+        return sb.toString();
     }
 
     public static void main(String[] args) {
@@ -338,6 +375,8 @@ class main {
         try {
             String a =main.infixToPostfix(main.make(sc.next()));
             System.out.println("Answer is: " + main.evaluatePostfix(a));
+            String j =main.show_steps(a);
+            System.out.println(j);
         } catch (Exception a) {
             System.out.println("ERROR");
         }
