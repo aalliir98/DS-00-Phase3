@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Calculator</string>
+    <string name="clear">Clear</string>
+    <string name="answer">Answer</string>
+    <string name="sin">sin</string>
+    <string name="cos">cos</string>
+    <string name="log">log</string>
+</resources>
