@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 class main {
-    public static StringBuffer st=new StringBuffer();
+    public static StringBuffer st = new StringBuffer();
 
     public static boolean isNumeric(String str) {
         try {
@@ -111,58 +111,111 @@ class main {
                     if (i == tokens.length)
                         break;
                 }
+                Stack st2;
+                boolean flag;
                 switch (String.valueOf(sbuf)) {
                     case "sin":
+                        flag = true;
+                        st2 = new Stack();
                         sbuf = new StringBuffer();
-                        while (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && (tokens[i + 1] >= '0' && tokens[i + 1] <= '9') && tokens[i - 1] != ')')) {
-                            sbuf.append(tokens[i++]);
+                        while (flag) {
+                            if (tokens[i] == '(')
+                                st2.push("(");
+
+                            if (tokens[i] == ')')
+                                st2.pop();
+
+                                sbuf.append(tokens[i]);
                             if (i == tokens.length)
                                 break;
+                            i++;
+                            flag = !st2.isEmpty();
                         }
-                        double b = Math.toRadians(Double.parseDouble(String.valueOf(sbuf)));
+                        double b = Math.toRadians(evaluatePostfix(infixToPostfix(make(sbuf.toString()))));
                         st.append(Math.sin(b));
                         i--;
                         break;
                     case "cos":
+                        flag = true;
+                        st2 = new Stack();
                         sbuf = new StringBuffer();
-                        while (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && (tokens[i + 1] >= '0' && tokens[i + 1] <= '9') && tokens[i - 1] != ')')) {
-                            sbuf.append(tokens[i++]);
+                        while (flag) {
+                            if (tokens[i] == '(')
+                                st2.push("(");
+
+                            if (tokens[i] == ')')
+                                st2.pop();
+
+                            sbuf.append(tokens[i]);
                             if (i == tokens.length)
                                 break;
+                            i++;
+                            flag = !st2.isEmpty();
                         }
-                        b = Math.toRadians(Double.parseDouble(String.valueOf(sbuf)));
+                        b = Math.toRadians(evaluatePostfix(infixToPostfix(make(sbuf.toString()))));
                         st.append(Math.cos(b));
                         i--;
                         break;
                     case "tan":
+                        flag = true;
+                        st2 = new Stack();
                         sbuf = new StringBuffer();
-                        while (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && (tokens[i + 1] >= '0' && tokens[i + 1] <= '9') && tokens[i - 1] != ')')) {
-                            sbuf.append(tokens[i++]);
+                        while (flag) {
+                            if (tokens[i] == '(')
+                                st2.push("(");
+
+                            if (tokens[i] == ')')
+                                st2.pop();
+
+                            sbuf.append(tokens[i]);
                             if (i == tokens.length)
                                 break;
+                            i++;
+                            flag = !st2.isEmpty();
                         }
-                        b = Math.toRadians(Double.parseDouble(String.valueOf(sbuf)));
+                        b = Math.toRadians(evaluatePostfix(infixToPostfix(make(sbuf.toString()))));
                         st.append(Math.tan(b));
                         i--;
                         break;
+
                     case "log":
+                        flag = true;
+                        st2 = new Stack();
                         sbuf = new StringBuffer();
-                        while (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && (tokens[i + 1] >= '0' && tokens[i + 1] <= '9') && tokens[i - 1] != ')')) {
-                            sbuf.append(tokens[i++]);
+                        while (flag) {
+                            if (tokens[i] == '(')
+                                st2.push("(");
+
+                            if (tokens[i] == ')')
+                                st2.pop();
+
+                            sbuf.append(tokens[i]);
                             if (i == tokens.length)
                                 break;
+                            i++;
+                            flag = !st2.isEmpty();
                         }
-                        st.append(Math.log(Double.parseDouble(String.valueOf(sbuf))));
+                        st.append(Math.log(evaluatePostfix(infixToPostfix(make(sbuf.toString())))));
                         i--;
                         break;
                     case "sqrt":
+                        flag = true;
+                        st2 = new Stack();
                         sbuf = new StringBuffer();
-                        while (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && (tokens[i + 1] >= '0' && tokens[i + 1] <= '9') && tokens[i - 1] != ')')) {
-                            sbuf.append(tokens[i++]);
+                        while (flag) {
+                            if (tokens[i] == '(')
+                                st2.push("(");
+
+                            if (tokens[i] == ')')
+                                st2.pop();
+
+                            sbuf.append(tokens[i]);
                             if (i == tokens.length)
                                 break;
+                            i++;
+                            flag = !st2.isEmpty();
                         }
-                        st.append(Math.sqrt(Double.parseDouble(String.valueOf(sbuf))));
+                        st.append(Math.sqrt(evaluatePostfix(infixToPostfix(make(sbuf.toString())))));
                         i--;
                         break;
                     case "e":
@@ -376,21 +429,20 @@ class main {
         return sb.toString();
     }
 
-    public static Node expressionTree(String postfix)  {
+    public static Node expressionTree(String postfix) {
         char[] tokens = postfix.toCharArray();
         java.util.Stack<Node> st = new java.util.Stack<Node>();
-        Node t1,t2,temp;
+        Node t1, t2, temp;
 
-        for(int i=0;i<postfix.length();i++){
+        for (int i = 0; i < postfix.length(); i++) {
             StringBuffer result = new StringBuffer();
-            if (tokens[i]  >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i-1] >= '0' && tokens[i-1] <= '9') && (tokens[i+1] >= '0' && tokens[i+1] <= '9'))) {
+            if (tokens[i] >= '0' && tokens[i] <= '9' || tokens[i] == '.' || (tokens[i] == '-' && i == 0) || (tokens[i] == '-' && !(tokens[i - 1] >= '0' && tokens[i - 1] <= '9') && (tokens[i + 1] >= '0' && tokens[i + 1] <= '9'))) {
                 while (tokens[i] != ' ')
                     result.append(tokens[i++]);
                 i--;
                 temp = new Node(String.valueOf(result));
                 st.push(temp);
-            }
-            else if (tokens[i]!=' '){
+            } else if (tokens[i] != ' ') {
 
                 temp = new Node(String.valueOf(tokens[i]));
 
@@ -424,11 +476,11 @@ class main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         try {
-            String a =main.infixToPostfix(main.make(sc.next()));
+            String a = main.infixToPostfix(main.make(sc.next()));
             System.out.println(main.show_steps(a));
             System.out.println("Answer is: " + main.evaluatePostfix(a));
             Node e = expressionTree(a);
-            System.out.println(print2DUtil(e,0));
+            System.out.println(print2DUtil(e, 0));
         } catch (Exception a) {
             System.out.println("ERROR");
         }
